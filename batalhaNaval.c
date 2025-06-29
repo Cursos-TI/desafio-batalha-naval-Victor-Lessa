@@ -1,40 +1,126 @@
 #include <stdio.h>
 
-// Desafio Batalha Naval - MateCheck
-// Este código inicial serve como base para o desenvolvimento do sistema de Batalha Naval.
-// Siga os comentários para implementar cada parte do desafio.
+#define TAMANHO_TABULEIRO 10 // Tamanho do tabuleiro 10x10
+#define TAMANHO_NAVIO 3      // Tamanho dos navios
+#define TAMANHO_HABILIDADE 5 // Tamanho das matrizes de habilidade
+
+// Função para inicializar o tabuleiro
+void inicializarTabuleiro(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO]) {
+    for (int i = 0; i < TAMANHO_TABULEIRO; i++) {
+        for (int j = 0; j < TAMANHO_TABULEIRO; j++) {
+            tabuleiro[i][j] = 0; // Inicializa com água
+        }
+    }
+}
+
+// Função para posicionar navios no tabuleiro
+void posicionarNavio(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], int linha, int coluna, int orientacao) {
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        int novaLinha = linha;
+        int novaColuna = coluna;
+
+        if (orientacao == 0) { // Horizontal
+            novaColuna += i;
+        } else if (orientacao == 1) { // Vertical
+            novaLinha += i;
+        }
+        tabuleiro[novaLinha][novaColuna] = 3; // 3 representa a parte do navio
+    }
+}
+
+// Função para criar a matriz de habilidade em forma de cone
+void criarHabilidadeCone(int habilidade[TAMANHO_HABILIDADE][TAMANHO_HABILIDADE]) {
+    for (int i = 0; i < TAMANHO_HABILIDADE; i++) {
+        for (int j = 0; j < TAMANHO_HABILIDADE; j++) {
+            if (j >= (TAMANHO_HABILIDADE / 2) - i && j <= (TAMANHO_HABILIDADE / 2) + i) {
+                habilidade[i][j] = 1; // Área afetada
+            } else {
+                habilidade[i][j] = 0; // Área não afetada
+            }
+        }
+    }
+}
+
+// Função para criar a matriz de habilidade em forma de cruz
+void criarHabilidadeCruz(int habilidade[TAMANHO_HABILIDADE][TAMANHO_HABILIDADE]) {
+    for (int i = 0; i < TAMANHO_HABILIDADE; i++) {
+        for (int j = 0; j < TAMANHO_HABILIDADE; j++) {
+            if (i == TAMANHO_HABILIDADE / 2 || j == TAMANHO_HABILIDADE / 2) {
+                habilidade[i][j] = 1; // Área afetada
+            } else {
+                habilidade[i][j] = 0; // Área não afetada
+            }
+        }
+    }
+}
+
+// Função para criar a matriz de habilidade em forma de octaedro
+void criarHabilidadeOctaedro(int habilidade[TAMANHO_HABILIDADE][TAMANHO_HABILIDADE]) {
+    for (int i = 0; i < TAMANHO_HABILIDADE; i++) {
+        for (int j = 0; j < TAMANHO_HABILIDADE; j++) {
+            if (i + j >= TAMANHO_HABILIDADE / 2 && i + (TAMANHO_HABILIDADE - 1 - j) >= TAMANHO_HABILIDADE / 2 &&
+                (TAMANHO_HABILIDADE - 1 - i) + j >= TAMANHO_HABILIDADE / 2 && (TAMANHO_HABILIDADE - 1 - i) + (TAMANHO_HABILIDADE - 1 - j) >= TAMANHO_HABILIDADE / 2) {
+                habilidade[i][j] = 1; // Área afetada
+            } else {
+                habilidade[i][j] = 0; // Área não afetada
+            }
+        }
+    }
+}
+
+// Função para sobrepor a matriz de habilidade ao tabuleiro
+void aplicarHabilidade(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], int habilidade[TAMANHO_HABILIDADE][TAMANHO_HABILIDADE], int origemLinha, int origemColuna) {
+    for (int i = 0; i < TAMANHO_HABILIDADE; i++) {
+        for (int j = 0; j < TAMANHO_HABILIDADE; j++) {
+            if (habilidade[i][j] == 1) {
+                int novaLinha = origemLinha + i;
+                int novaColuna = origemColuna + j;
+                // Verifica se a nova posição está dentro dos limites do tabuleiro
+                if (novaLinha >= 0 && novaLinha < TAMANHO_TABULEIRO && novaColuna >= 0 && novaColuna < TAMANHO_TABULEIRO) {
+                    tabuleiro[novaLinha][novaColuna] = 5; // 5 representa a área afetada pela habilidade
+                }
+            }
+        }
+    }
+}
+
+// Função para exibir o tabuleiro
+void exibirTabuleiro(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO]) {
+    printf("Tabuleiro de Batalha Naval:\n");
+    for (int i = 0; i < TAMANHO_TABULEIRO; i++) {
+        for (int j = 0; j < TAMANHO_TABULEIRO; j++) {
+            printf("%2d ", tabuleiro[i][j]); // Imprime cada elemento do tabuleiro
+        }
+        printf("\n"); // Nova linha após cada linha do tabuleiro
+    }
+}
 
 int main() {
-    // Nível Novato - Posicionamento dos Navios
-    // Sugestão: Declare uma matriz bidimensional para representar o tabuleiro (Ex: int tabuleiro[5][5];).
-    // Sugestão: Posicione dois navios no tabuleiro, um verticalmente e outro horizontalmente.
-    // Sugestão: Utilize `printf` para exibir as coordenadas de cada parte dos navios.
+    // Declaração e inicialização do tabuleiro
+    int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO];
+    inicializarTabuleiro(tabuleiro);
 
-    // Nível Aventureiro - Expansão do Tabuleiro e Posicionamento Diagonal
-    // Sugestão: Expanda o tabuleiro para uma matriz 10x10.
-    // Sugestão: Posicione quatro navios no tabuleiro, incluindo dois na diagonal.
-    // Sugestão: Exiba o tabuleiro completo no console, mostrando 0 para posições vazias e 3 para posições ocupadas.
+    // Posicionamento dos navios
+    posicionarNavio(tabuleiro, 2, 1, 0); // Navio 1: Horizontal
+    posicionarNavio(tabuleiro, 0, 5, 1); // Navio 2: Vertical
 
-    // Nível Mestre - Habilidades Especiais com Matrizes
-    // Sugestão: Crie matrizes para representar habilidades especiais como cone, cruz, e octaedro.
-    // Sugestão: Utilize estruturas de repetição aninhadas para preencher as áreas afetadas por essas habilidades no tabuleiro.
-    // Sugestão: Exiba o tabuleiro com as áreas afetadas, utilizando 0 para áreas não afetadas e 1 para áreas atingidas.
+    // Matrizes de habilidade
+    int habilidadeCone[TAMANHO_HABILIDADE][TAMANHO_HABILIDADE];
+    int habilidadeCruz[TAMANHO_HABILIDADE][TAMANHO_HABILIDADE];
+    int habilidadeOctaedro[TAMANHO_HABILIDADE][TAMANHO_HABILIDADE];
 
-    // Exemplos de exibição das habilidades:
-    // Exemplo para habilidade em cone:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 1 1 1 1 1
-    
-    // Exemplo para habilidade em octaedro:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 0 0 1 0 0
+    // Criar as matrizes de habilidade
+    criarHabilidadeCone(habilidadeCone);
+    criarHabilidadeCruz(habilidadeCruz);
+    criarHabilidadeOctaedro(habilidadeOctaedro);
 
-    // Exemplo para habilidade em cruz:
-    // 0 0 1 0 0
-    // 1 1 1 1 1
-    // 0 0 1 0 0
+    // Aplicar habilidades ao tabuleiro
+    aplicarHabilidade(tabuleiro, habilidadeCone, 0, 2); // Cone na posição (0, 2)
+    aplicarHabilidade(tabuleiro, habilidadeCruz, 4, 4); // Cruz na posição (4, 4)
+    aplicarHabilidade(tabuleiro, habilidadeOctaedro, 6, 3); // Octaedro na posição (6, 3)
+
+    // Exibir o tabuleiro final
+    exibirTabuleiro(tabuleiro);
 
     return 0;
 }
